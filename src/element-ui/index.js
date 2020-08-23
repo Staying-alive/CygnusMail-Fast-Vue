@@ -75,7 +75,9 @@ import {
   Loading,
   MessageBox,
   Message,
-  Notification
+  Notification,
+  // 20200823 added by zhengping jin
+  Image
 } from 'element-ui'
 
 Vue.use(Pagination)
@@ -141,6 +143,9 @@ Vue.use(Header)
 Vue.use(Aside)
 Vue.use(Main)
 Vue.use(Footer)
+
+// 20200823 added by zhengping jin
+Vue.use(Image)
 
 Vue.use(Loading.directive)
 
