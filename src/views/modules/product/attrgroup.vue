@@ -11,6 +11,7 @@
           </el-form-item>
           <el-form-item>
             <el-button @click="getDataList()">查询</el-button>
+            <el-button type="success" @click="getAllDataList()">查询全部</el-button>
             <el-button
               v-if="isAuth('product:attrgroup:save')"
               type="primary"
@@ -46,6 +47,7 @@
             label="操作"
           >
             <template slot-scope="scope">
+              <el-button type="text" size="small" @click="relationHandle(scope.row.attrGroupId)">关联</el-button>
               <el-button
                 type="text"
                 size="small"
@@ -66,6 +68,8 @@
         ></el-pagination>
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+        <!-- 修改关联关系 -->
+        <relation-update v-if="relationVisible" ref="relationUpdate" @refreshData="getDataList"></relation-update>
       </div>
     </el-col>
   </el-row>
@@ -73,11 +77,12 @@
 <script>
 import Category from "../common/category";
 import AddOrUpdate from "./attrgroup-add-or-update";
+import RelationUpdate from "./attr-group-relation";
 // 父子组件传递数据
 // 子组件给父组件传递数据，使用事件机制
 //    子组件给父组件发送一个事件，事件携带数据
 export default {
-  components: { Category, AddOrUpdate },
+  components: { Category, AddOrUpdate, RelationUpdate },
   props: {},
   data() {
     return {
@@ -92,12 +97,20 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
+      relationVisible: false,
     };
   },
   activated() {
     this.getDataList();
   },
   methods: {
+    //处理分组与属性的关联
+    relationHandle(groupId) {
+      this.relationVisible = true;
+      this.$nextTick(() => {
+        this.$refs.relationUpdate.init(groupId);
+      });
+    },
     // 感知子树节点被点击
     treenodeclick(data, node, compo) {
       console.log("attrgroup-treenodeclick:   ", data, node, compo);
@@ -187,6 +200,10 @@ export default {
           }
         });
       });
+    },
+    getAllDataList() {
+      this.catId = 0;
+      this.getDataList();
     },
   },
 };

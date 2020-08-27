@@ -64,13 +64,14 @@ export default {
         url: this.$http.adornUrl("/product/category/list/tree"),
         method: "get"
       }).then(({ data }) => {
-        this.categorys = data.data;
+        this.categorys = data.dataLis;
       });
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     this.getCategorys();
+    console.log("category-cascader - created", this.categorys);
   }
 };
 </script>
