@@ -349,6 +349,7 @@
 import CategoryCascader from "../common/category-cascader";
 import BrandSelect from "../common/brand-select";
 import MultiUpload from "@/components/upload/multiUpload";
+import PubSub from 'pubsub-js';
 export default {
   //import引入的组件需要注入到对象中才能使用
   components: { CategoryCascader, BrandSelect, MultiUpload },
@@ -380,32 +381,32 @@ export default {
         skus: [] //所有sku信息
       },
       spuBaseInfoRules: {
-        spuName: [
-          { required: true, message: "请输入商品名字", trigger: "blur" }
-        ],
-        spuDescription: [
-          { required: true, message: "请编写一个简单描述", trigger: "blur" }
-        ],
-        catalogId: [
-          { required: true, message: "请选择一个分类", trigger: "blur" }
-        ],
-        brandId: [
-          { required: true, message: "请选择一个品牌", trigger: "blur" }
-        ],
-        decript: [
-          { required: true, message: "请上传商品详情图集", trigger: "blur" }
-        ],
-        images: [
-          { required: true, message: "请上传商品图片集", trigger: "blur" }
-        ],
-        weight: [
-          {
-            type: "number",
-            required: true,
-            message: "请填写正确的重量值",
-            trigger: "blur"
-          }
-        ]
+        // spuName: [
+        //   { required: true, message: "请输入商品名字", trigger: "blur" }
+        // ],
+        // spuDescription: [
+        //   { required: true, message: "请编写一个简单描述", trigger: "blur" }
+        // ],
+        // catalogId: [
+        //   { required: true, message: "请选择一个分类", trigger: "blur" }
+        // ],
+        // brandId: [
+        //   { required: true, message: "请选择一个品牌", trigger: "blur" }
+        // ],
+        // decript: [
+        //   { required: true, message: "请上传商品详情图集", trigger: "blur" }
+        // ],
+        // images: [
+        //   { required: true, message: "请上传商品图片集", trigger: "blur" }
+        // ],
+        // weight: [
+        //   {
+        //     type: "number",
+        //     required: true,
+        //     message: "请填写正确的重量值",
+        //     trigger: "blur"
+        //   }
+        // ]
       },
       dataResp: {
         //后台返回的所有数据
@@ -783,12 +784,14 @@ export default {
   created() {},
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
+    console.log("mounted start");
     this.catPathSub = PubSub.subscribe("catPath", (msg, val) => {
       this.spu.catalogId = val[val.length - 1];
     });
     this.brandIdSub = PubSub.subscribe("brandId", (msg, val) => {
       this.spu.brandId = val;
     });
+    console.log("getMemberLevels");
     this.getMemberLevels();
   },
   beforeCreate() {}, //生命周期 - 创建之前
