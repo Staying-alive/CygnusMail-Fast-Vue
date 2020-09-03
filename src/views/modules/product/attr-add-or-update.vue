@@ -220,12 +220,6 @@ export default {
               this.dataForm.valueType = data.attr.valueType;
               this.dataForm.icon = data.attr.icon;
               this.dataForm.valueSelect = data.attr.valueSelect.split(";");
-              // valueType
-              if (data.attr.valueSelect.split(";").length >1){
-                this.dataForm.valueType = 1;
-              }else{
-                this.dataForm.valueType = 0;
-              }
               this.dataForm.attrType = data.attr.attrType;
               this.dataForm.enable = data.attr.enable;
               this.dataForm.catelogId = data.attr.catelogId;

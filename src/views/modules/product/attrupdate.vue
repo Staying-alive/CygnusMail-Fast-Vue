@@ -178,12 +178,14 @@ export default {
   },
   created() {},
   activated() {
+    console.log("attrupdate activated start ");
     this.clearData();
     this.getQueryParams();
     if (this.spuId && this.catalogId) {
       this.showBaseAttrs();
       this.getSpuBaseAttrs();
     }
+    console.log("attrupdate activated end ");
   }
 };
 </script>

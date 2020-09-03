@@ -381,32 +381,32 @@ export default {
         skus: [] //所有sku信息
       },
       spuBaseInfoRules: {
-        // spuName: [
-        //   { required: true, message: "请输入商品名字", trigger: "blur" }
-        // ],
-        // spuDescription: [
-        //   { required: true, message: "请编写一个简单描述", trigger: "blur" }
-        // ],
-        // catalogId: [
-        //   { required: true, message: "请选择一个分类", trigger: "blur" }
-        // ],
-        // brandId: [
-        //   { required: true, message: "请选择一个品牌", trigger: "blur" }
-        // ],
+        spuName: [
+          { required: true, message: "请输入商品名字", trigger: "blur" }
+        ],
+        spuDescription: [
+          { required: true, message: "请编写一个简单描述", trigger: "blur" }
+        ],
+        catalogId: [
+          { required: true, message: "请选择一个分类", trigger: "blur" }
+        ],
+        brandId: [
+          { required: true, message: "请选择一个品牌", trigger: "blur" }
+        ],
         // decript: [
         //   { required: true, message: "请上传商品详情图集", trigger: "blur" }
         // ],
         // images: [
         //   { required: true, message: "请上传商品图片集", trigger: "blur" }
         // ],
-        // weight: [
-        //   {
-        //     type: "number",
-        //     required: true,
-        //     message: "请填写正确的重量值",
-        //     trigger: "blur"
-        //   }
-        // ]
+        weight: [
+          {
+            type: "number",
+            required: true,
+            message: "请填写正确的重量值",
+            trigger: "blur"
+          }
+        ]
       },
       dataResp: {
         //后台返回的所有数据
@@ -674,6 +674,7 @@ export default {
           method: "get",
           params: this.$http.adornParams({})
         }).then(({ data }) => {
+          console.log("data showBaseAttrs", data.data);
           //先对表单的baseAttrs进行初始化
           data.data.forEach(item => {
             let attrArray = [];

@@ -1,13 +1,12 @@
 <template>
   <div>
     <el-upload
-      action="http://gulimall.oss-cn-shanghai.aliyuncs.com"
-      :data="dataObj"
+      :action="presignedUrl"
+      :http-request="upload"
       list-type="picture-card"
       :file-list="fileList"
       :before-upload="beforeUpload"
       :on-remove="handleRemove"
-      :on-success="handleUploadSuccess"
       :on-preview="handlePreview"
       :limit="maxCount"
       :on-exceed="handleExceed"
@@ -21,7 +20,8 @@
 </template>
 <script>
 import { policy } from "./policy";
-import { getUUID } from '@/utils'
+import { getUUID } from "@/utils";
+import axios from "axios";
 export default {
   name: "multiUpload",
   props: {
@@ -30,8 +30,8 @@ export default {
     //最大上传图片数量
     maxCount: {
       type: Number,
-      default: 30
-    }
+      default: 10,
+    },
   },
   data() {
     return {
@@ -42,10 +42,16 @@ export default {
         ossaccessKeyId: "",
         dir: "",
         host: "",
-        uuid: ""
+        uuid: "",
       },
       dialogVisible: false,
-      dialogImageUrl: null
+      dialogImageUrl: null,
+      presignedUrl: "https://cygnusmail.s3.ap-northeast-1.amazonaws.com",
+      policyParams: {
+        contentType: "",
+        method: "",
+        keyname: "",
+      },
     };
   },
   computed: {
@@ -56,16 +62,41 @@ export default {
       }
 
       return fileList;
-    }
+    },
   },
   mounted() {},
   methods: {
+    upload(res) {
+      let file = res.file; //注意：直接上传file文件，不要用FormData对象的形式传
+      let config = {
+        headers: {
+          "Content-Type": res.file.type,
+        },
+      };
+
+      axios
+        .put(this.presignedUrl, file, config)
+        .then((res) => {
+          this.fileList.push({
+            name: file.name,
+            // url: this.dataObj.host + "/" + this.dataObj.dir + "/" + file.name； 替换${filename}为真正的文件名
+            url:
+              this.presignedUrl.substr(0, this.presignedUrl.lastIndexOf("?")),
+          });
+          this.emitInput(this.fileList);
+          console.log("upload(res)", this.fileList);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     emitInput(fileList) {
       let value = [];
       for (let i = 0; i < fileList.length; i++) {
         value.push(fileList[i].url);
       }
       this.$emit("input", value);
+      console.log("emitInput", value);
     },
     handleRemove(file, fileList) {
       this.emitInput(fileList);
@@ -76,40 +107,33 @@ export default {
     },
     beforeUpload(file) {
       let _self = this;
+      this.policyParams = {
+        keyName: getUUID() + "_" + file.name,
+        method: "put",
+        contentType: file.type,
+      };
       return new Promise((resolve, reject) => {
-        policy()
-          .then(response => {
-            console.log("这是什么${filename}");
-            _self.dataObj.policy = response.data.policy;
-            _self.dataObj.signature = response.data.signature;
-            _self.dataObj.ossaccessKeyId = response.data.accessid;
-            _self.dataObj.key = response.data.dir + "/"+getUUID()+"_${filename}";
-            _self.dataObj.dir = response.data.dir;
-            _self.dataObj.host = response.data.host;
+        policy(this.policyParams)
+          .then((response) => {
+            this.presignedUrl = response;
             resolve(true);
+            this.policyParams = {};
           })
-          .catch(err => {
-            console.log("出错了...",err)
+          .catch((err) => {
+            console.log("出错了...", err);
             reject(false);
           });
       });
     },
-    handleUploadSuccess(res, file) {
-      this.fileList.push({
-        name: file.name,
-        // url: this.dataObj.host + "/" + this.dataObj.dir + "/" + file.name； 替换${filename}为真正的文件名
-        url: this.dataObj.host + "/" + this.dataObj.key.replace("${filename}",file.name)
-      });
-      this.emitInput(this.fileList);
-    },
     handleExceed(files, fileList) {
+      console.log("handleExceed", this.fileList);
       this.$message({
         message: "最多只能上传" + this.maxCount + "张图片",
         type: "warning",
-        duration: 1000
+        duration: 1000,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

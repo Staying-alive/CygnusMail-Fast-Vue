@@ -10,3 +10,14 @@ export function policy(entity) {
         })
     });
 }
+export function policyOfMultiUpload() {
+    return  new Promise((resolve,reject)=>{
+         http({
+             url: http.adornUrl("/thirdparty/s3/policyOfMultiUpload"),
+             method: "get",
+             params: http.adornParams({})
+         }).then(({ data }) => {
+             resolve(data);
+         })
+     });
+ }

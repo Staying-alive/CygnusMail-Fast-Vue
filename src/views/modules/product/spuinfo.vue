@@ -94,11 +94,13 @@ export default {
       });
     },
     attrUpdateShow(row) {
+      console.log("attrUpdateShow start");
       console.log(row);
       this.$router.push({
         path: "/product-attrupdate",
         query: { spuId: row.id, catalogId: row.catalogId }
       });
+      console.log("attrUpdateShow end");
     },
     // 获取数据列表
     getDataList() {
